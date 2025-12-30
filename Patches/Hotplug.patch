@@ -1,0 +1,59 @@
+####################
+---
+ drivers/base/core.c          | 2 +-
+ drivers/soc/samsung/Kconfig  | 5 +++++
+ drivers/soc/samsung/Makefile | 4 ++--
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index d1b71b49..df3928e9 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -445,7 +445,7 @@ static ssize_t online_store(struct device *dev, struct device_attribute *attr,
+ 	bool val;
+ 	int ret;
+ 
+-#ifdef CONFIG_ARCH_EXYNOS
++#ifdef CONFIG_EXYNOS_CPU_HOTPLUG
+ 	if (exynos_cpu_hotplug_enabled())
+ 		return count;
+ #endif
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index e46e40a8..3926d773 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -49,8 +49,13 @@ config SCHED_AVG_NR_RUNNING
+ 	help
+ 	  Enable to use average nr_running in scheduler
+ 
++config EXYNOS_CPU_HOTPLUG
++	bool "Enable Exynos dynamic CPU hotplug"
++	default n
++
+ config EXYNOS_HOTPLUG_GOVERNOR
+ 	bool "Enable Exynos dynamic hotplug governor"
++	depends on EXYNOS_CPU_HOTPLUG
+ 	select SCHED_AVG_NR_RUNNING
+ 
+ config EXYNOS_MCINFO
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 061a1d72..122e1fd2 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -6,7 +6,6 @@ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-pm.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-pmu.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-powermode.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-el3_mon.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-cpu_hotplug.o
+ obj-$(CONFIG_EXYNOS_MCINFO)	+= exynos-mcinfo.o
+ 
+ obj-$(CONFIG_ARCH_EXYNOS)	+= secmem.o
+@@ -23,5 +22,6 @@ obj-$(CONFIG_SEC_SIPC_MODEM_IF)	+= pmu-cp.o
+ 
+ obj-$(CONFIG_ECT)		+= ect_parser.o
+ 
++obj-$(CONFIG_EXYNOS_CPU_HOTPLUG)	+= exynos-cpu_hotplug.o
+ obj-$(CONFIG_EXYNOS_HOTPLUG_GOVERNOR)	+= exynos-hotplug_governor.o
+-obj-$(CONFIG_SEC_INCELL) += sec_incell.o
+\ No newline at end of file
++obj-$(CONFIG_SEC_INCELL) += sec_incell.o
